@@ -29,7 +29,8 @@ S3_RESULTS_URL = os.environ.get(
     "S3_RESULTS_URL", "https://mealscount-results.s3-us-west-1.amazonaws.com"
 )
 
-# From https://stackoverflow.com/questions/5870188/does-flask-support-regular-expressions-in-its-url-routing
+# From
+# https://stackoverflow.com/questions/5870188/does-flask-support-regular-expressions-in-its-url-routing
 
 
 class RegexConverter(BaseConverter):
@@ -72,7 +73,7 @@ def get_district(state, code, district_params):
     for row in schools_data:
         # TODO check for updated row data in district_params!
         school = CEPSchool(row)
-        if district == None:
+        if district is None:
             district = CEPDistrict(school.district, school.district_code)
         district.add_school(school)
 
@@ -106,7 +107,8 @@ def optimize_async():
             "Binning",
         ]
         if len(event["schools"]) > 11:
-            event["strategies_to_run"].append("NYCMODA?fresh_starts=50&iterations=1000")
+            event["strategies_to_run"].append(
+                "NYCMODA?fresh_starts=50&iterations=1000")
             event["strategies_to_run"].append("GreedyLP")
 
     # Large school districts (LA) don't fit in our 256kb Event Invocation limit on Lambda,
@@ -121,7 +123,9 @@ def optimize_async():
 
     client = boto3.client("lambda")
     response = client.invoke(
-        FunctionName=os.environ.get("LAMBDA_FUNCTION_NAME", "mealscount-optimize"),
+        FunctionName=os.environ.get(
+            "LAMBDA_FUNCTION_NAME",
+            "mealscount-optimize"),
         InvocationType="Event",
         Payload=json.dumps(event),
     )
@@ -150,12 +154,14 @@ def optimize():
     for row in schools:
         # Expecting { school_code: {active, daily_breakfast_served,daily_lunch_served,total_eligible,total_enrolled }}
         # TODO rework how we initialize CEPSchool
-        if not row.get("school_code", None) or not row.get("total_enrolled", None):
+        if not row.get("school_code", None) or not row.get(
+                "total_enrolled", None):
             continue
         row["School Name"] = row.get("school_name", "School %i" % i)
         row["School Code"] = row.get("school_code", "school-%i" % i)
         row["School Type"] = row.get("school_type", "")
-        row["include_in_mealscount"] = row.get("active", "true") and "true" or "false"
+        row["include_in_mealscount"] = row.get(
+            "active", "true") and "true" or "false"
         i += 1
         district.add_school(CEPSchool(row))
 
@@ -204,7 +210,8 @@ def district(state, code):
 
 @app.route("/api/states/", methods=["GET"])
 def states():
-    # keyed by lowercase abbr (e.g. "ca"), with "name", "district_data", "about"
+    # keyed by lowercase abbr (e.g. "ca"), with "name", "district_data",
+    # "about"
     states = {}
     DATA_FOLDER = os.path.join(os.path.dirname(__file__), "data")
     STATIC_FOLDER = os.path.join(os.path.dirname(__file__), "dist", "static")
@@ -214,12 +221,14 @@ def states():
             state_info = us.states.lookup(state)
             if state_info:
                 s = {"name": state_info.name, "fips": state_info.fips}
-                if os.path.exists(os.path.join(DATA_FOLDER, state, "about.html")):
+                if os.path.exists(os.path.join(
+                        DATA_FOLDER, state, "about.html")):
                     s["about"] = open(
                         os.path.join(DATA_FOLDER, state, "about.html")
                     ).read()[:1024]
                 # District data is loaded through /api/districts/state/
-                if os.path.exists(os.path.join(STATIC_FOLDER, state, "districts.json")):
+                if os.path.exists(os.path.join(
+                        STATIC_FOLDER, state, "districts.json")):
                     s["district_list"] = os.path.join(
                         "/static/", state, "districts.json"
                     )

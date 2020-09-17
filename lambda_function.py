@@ -42,13 +42,17 @@ def lambda_handler(event, context, local_output=False):
 
     i = 1
     for row in schools:
-        # Expecting { school_code: {active, daily_breakfast_served,daily_lunch_served,total_eligible,total_enrolled }}
-        if not row.get("school_code", None) or not row.get("total_enrolled", None):
+        # Expecting { school_code: {active,
+        # daily_breakfast_served,daily_lunch_served,total_eligible,total_enrolled
+        # }}
+        if not row.get("school_code", None) or not row.get(
+                "total_enrolled", None):
             continue
         row["School Name"] = row.get("school_name", "School %i" % i)
         row["School Code"] = row.get("school_code", "school-%i" % i)
         row["School Type"] = row.get("school_type", "")
-        row["include_in_mealscount"] = row.get("active", "true") and "true" or "false"
+        row["include_in_mealscount"] = row.get(
+            "active", "true") and "true" or "false"
         i += 1
         district.add_school(CEPSchool(row))
 

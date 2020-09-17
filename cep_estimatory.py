@@ -39,11 +39,11 @@ def parse_districts(school_data, strategies, rates=None):
             )
             for s in strategies:
                 StrategyClass, params, strategy_name = s
-                district.strategies.append(StrategyClass(params, name=strategy_name))
+                district.strategies.append(
+                    StrategyClass(params, name=strategy_name))
             districts.setdefault(district_name, district)
         districts[district_name].add_school(school)
-    districts = list([d for d in districts.values() if len(d.schools) > 0])
-    districts.sort()
+    districts = sorted([d for d in districts.values() if len(d.schools) > 0])
     return districts
 
 
@@ -61,7 +61,8 @@ def add_strategies(district, *strategies):
 
 
 @click.command()
-@click.option("--target-district", default=None, help="Specific district code to run")
+@click.option("--target-district", default=None,
+              help="Specific district code to run")
 @click.option(
     "--show-groups",
     default=False,
@@ -159,7 +160,7 @@ def cli(
     ]
 
     # Reduce to target district if specified
-    if target_district != None:
+    if target_district is not None:
         schools = [
             s
             for s in schools
@@ -182,12 +183,13 @@ def cli(
         )
     )
 
-    if min_schools != None:
+    if min_schools is not None:
         x = len(districts)
         districts = [d for d in districts if len(d.schools) >= min_schools]
         x = x - len(districts)
         click.secho(
-            "Ignoring %i districts with less than %i schools" % (x, min_schools)
+            "Ignoring %i districts with less than %i schools" % (
+                x, min_schools)
         )
 
     n_schools = sum([len(d.schools) for d in districts])
@@ -212,10 +214,12 @@ def cli(
     for district in districts:
         if district.strategies:
             p0 = (
-                float(district.strategies[0].students_covered) / district.total_enrolled
+                float(
+                    district.strategies[0].students_covered) / district.total_enrolled
             )
             p1 = (
-                float(district.best_strategy.students_covered) / district.total_enrolled
+                float(district.best_strategy.students_covered) /
+                district.total_enrolled
             )
         else:
             p0, p1 = 0, 0
@@ -248,7 +252,12 @@ def cli(
     for s in districts[0].strategies:
         headers.append("reimb: %s" % s.name)
         float_fmt.append(",.0f")
-    print(tabulate.tabulate(data, headers, tablefmt="pipe", floatfmt=float_fmt))
+    print(
+        tabulate.tabulate(
+            data,
+            headers,
+            tablefmt="pipe",
+            floatfmt=float_fmt))
 
     click.secho("\n" + "=" * 100, bold=True)
 
@@ -392,7 +401,9 @@ def cli(
                             * 180,
                         }
                         w.writerow(row)
-            print("Outputted CSV for District %s optimized with %s" % (td, strat))
+            print(
+                "Outputted CSV for District %s optimized with %s" %
+                (td, strat))
 
     if output_json:
         with open(output_json, "w") as out_file:
