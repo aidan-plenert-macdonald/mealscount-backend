@@ -8,8 +8,8 @@ import os.path
 from urllib import parse
 
 import click
-
 import tabulate
+
 from strategies import STRATEGIES
 from strategies.base import CEPDistrict, CEPSchool
 

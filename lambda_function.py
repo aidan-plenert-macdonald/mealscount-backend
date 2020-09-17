@@ -14,6 +14,7 @@ from io import BytesIO
 
 import boto3
 import botocore
+
 from cep_estimatory import add_strategies
 from strategies.base import CEPDistrict, CEPSchool
 

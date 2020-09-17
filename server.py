@@ -15,12 +15,13 @@ from urllib.parse import urlparse
 
 import boto3
 import us
-from cep_estimatory import add_strategies, parse_districts, parse_strategy
 from flask import Flask, jsonify, redirect, render_template, request
 from flask_cors import CORS
 from flask_talisman import Talisman
-from strategies.base import CEPDistrict, CEPSchool
 from werkzeug.routing import BaseConverter
+
+from cep_estimatory import add_strategies, parse_districts, parse_strategy
+from strategies.base import CEPDistrict, CEPSchool
 
 # If we have specified AWS keys, this is where we will tell the client where
 # the results will be on S3
