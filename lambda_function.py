@@ -90,6 +90,7 @@ def lambda_handler(event, context, local_output=False):
     if local_output:
         print("Would output to s3bucket:%s" % result_key)
         print(json.dumps(result, indent=1))
+        return result
     else:
         s3_client = boto3.client("s3")
 

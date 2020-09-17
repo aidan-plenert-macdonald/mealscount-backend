@@ -23,6 +23,8 @@ from werkzeug.routing import BaseConverter
 from cep_estimatory import add_strategies, parse_districts, parse_strategy
 from strategies.base import CEPDistrict, CEPSchool
 
+from lambda_function import lambda_handler
+
 # If we have specified AWS keys, this is where we will tell the client where
 # the results will be on S3
 S3_RESULTS_URL = os.environ.get(
@@ -142,55 +144,7 @@ def optimize_async():
 
 @app.route("/api/districts/optimize/", methods=["POST"])
 def optimize():
-    d_obj = request.json
-    schools = d_obj["schools"]
-    district = CEPDistrict(
-        d_obj["name"], d_obj["code"], reimbursement_rates=d_obj["rates"]
-    )
-
-    state = d_obj["state_code"]
-
-    i = 1
-    for row in schools:
-        # Expecting { school_code: {active, daily_breakfast_served,daily_lunch_served,total_eligible,total_enrolled }}
-        # TODO rework how we initialize CEPSchool
-        if not row.get("school_code", None) or not row.get(
-                "total_enrolled", None):
-            continue
-        row["School Name"] = row.get("school_name", "School %i" % i)
-        row["School Code"] = row.get("school_code", "school-%i" % i)
-        row["School Type"] = row.get("school_type", "")
-        row["include_in_mealscount"] = row.get(
-            "active", "true") and "true" or "false"
-        i += 1
-        district.add_school(CEPSchool(row))
-
-    # TODO allow this as a param
-    add_strategies(
-        district,
-        *[
-            "Pairs",
-            "OneToOne",
-            "Exhaustive",
-            "OneGroup",
-            "Spread",
-            "Binning",
-            "NYCMODA?fresh_starts=10&iterations=150",
-            "GreedyLP",
-        ]
-    )
-
-    t0 = time.time()
-    district.run_strategies()
-    district.evaluate_strategies()
-
-    result = district.as_dict()
-    result["state_code"] = state
-    result["optimization_info"] = {
-        "timestamp": str(datetime.datetime.now()),
-        "time": time.time() - t0,
-    }
-    return result
+    return lambda_handler(request.json, {}, local_output=True)
 
 
 @app.route(
