@@ -2,9 +2,15 @@ FROM python:3.7 AS base
 ENV PYTHONUNBUFFERED 1
 RUN mkdir /code
 WORKDIR /code
-COPY requirements.txt /code/
+COPY *requirements.txt /code/
 RUN pip install -r requirements.txt
+
+FROM base AS testing
+RUN pip install pylint
 COPY . /code/
+
+RUN pylint **.py
+
 
 FROM node AS npm_build
 COPY --from=base /code/ ./code

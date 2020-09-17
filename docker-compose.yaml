@@ -10,7 +10,7 @@ services:
       - FLASK_APP=server.py
     working_dir: /code/
     volumes:
-      - ./data/:/code/data/:cached
+      - ./data/:/code/data/
 # switch to entire local folder to do dev
 # but you need to npm build on your local folder, not docker container
 #      - ./:/code/:cached
