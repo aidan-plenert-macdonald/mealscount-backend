@@ -120,21 +120,19 @@ def add_strategies(district, *strategies):
 )
 @click.argument("cupc_csv_file", nargs=1)
 @click.argument("strategies", nargs=-1)
-def cli(
-    cupc_csv_file,
-    strategies=["OneToOne"],
-    target_district=None,
-    show_groups=False,
-    show_schools=False,
-    min_schools=None,
-    list_strategies=False,
-    output_json=None,
-    output_csv=None,
-    output_folder=None,
-    investigate=False,
-    rates=None,
-    evaluate_by="reimbursement",
-):
+def cli(cupc_csv_file,
+        strategies=["OneToOne"],
+        target_district=None,
+        show_groups=False,
+        show_schools=False,
+        min_schools=None,
+        list_strategies=False,
+        output_json=None,
+        output_csv=None,
+        output_folder=None,
+        investigate=False,
+        rates=None,
+        evaluate_by="reimbursement"):
     """CEP Estimator - runs strategies for grouping School Districts into optimial CEP coverage
 
     To run, specify the schools/districts CSV file, as well as any number of strategies (use --list-strategies to see those available)
@@ -397,8 +395,7 @@ def cli(
                             "total_eligible": s.total_eligible,
                             "daily_breakfast_served": s.bfast_served,
                             "daily_lunch_served": s.lunch_served,
-                            "estimated_school_reimbursement": g.school_reimbursement(s)
-                            * 180,
+                            "estimated_school_reimbursement": g.school_reimbursement(s) * 180,
                         }
                         w.writerow(row)
             print(
