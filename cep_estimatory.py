@@ -1,13 +1,17 @@
+# pylint: disable=invalid-name,line-too-long,missing-function-docstring
+
+import codecs
 import csv
-import click
-import tabulate
-from strategies.base import CEPSchool, CEPDistrict
-from strategies import STRATEGIES
-from urllib import parse
+import json
 import os
 import os.path
-import codecs
-import json
+from urllib import parse
+
+import click
+
+import tabulate
+from strategies import STRATEGIES
+from strategies.base import CEPDistrict, CEPSchool
 
 #### CLI ####
 

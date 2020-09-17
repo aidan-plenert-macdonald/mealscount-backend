@@ -1,30 +1,26 @@
+# pylint: disable=invalid-name,line-too-long,missing-function-docstring
+
+import base64
 import codecs
 import csv
-from cep_estimatory import parse_districts
-from flask import Flask, jsonify, render_template, request, redirect
-from flask_cors import CORS
-from flask_talisman import Talisman
-from werkzeug.routing import BaseConverter
-from urllib.parse import urlparse
+import datetime
+import json
 import os
 import os.path
-import datetime
 import time
-import us
 import uuid
-import json
 import zipfile
 from io import BytesIO
+from urllib.parse import urlparse
 
 import boto3
-import base64
-
-import csv
-import codecs
-import os
-import os.path
+import us
+from cep_estimatory import add_strategies, parse_districts, parse_strategy
+from flask import Flask, jsonify, redirect, render_template, request
+from flask_cors import CORS
+from flask_talisman import Talisman
 from strategies.base import CEPDistrict, CEPSchool
-from cep_estimatory import parse_strategy, add_strategies
+from werkzeug.routing import BaseConverter
 
 # If we have specified AWS keys, this is where we will tell the client where
 # the results will be on S3

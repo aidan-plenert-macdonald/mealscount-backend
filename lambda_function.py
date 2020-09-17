@@ -1,19 +1,21 @@
+# pylint: disable=invalid-name,line-too-long,missing-function-docstring
+
 # AWS Lambda Handler
 #
 # Use Dockerfile.lambda to package/upload (see the instructions in the Dockerfile)
 #
-from strategies.base import CEPDistrict, CEPSchool
-from cep_estimatory import add_strategies
-import os
+import base64
 import datetime
 import json
+import os
 import time
 import zipfile
 from io import BytesIO
-import base64
 
 import boto3
 import botocore
+from cep_estimatory import add_strategies
+from strategies.base import CEPDistrict, CEPSchool
 
 
 def lambda_handler(event, context, local_output=False):
